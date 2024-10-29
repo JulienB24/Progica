@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}PROGICA - Home
+{% endblock %}
+
+{% block body %}
+	<style>
+
+		.card img {
+			width: auto;
+			height: 250px;
+		}
+		.card-text {
+			height: 50px
+		}
+	</style>
+
+	<div class="container m-auto">
+		<h1 class="">Progica,<span>Réservez la location de vacances de vos rêves :</span>
+		</h1>
+
+		<p>Nos gîtes:
+		</p>
+		<div class="row">
+			{% for gite in gites %}
+				<div class="col-md-4">
+					<div class="card mb-4 bg-dark">
+						<img class="card-img-top" src="{{gite.photo}}" alt="Card img cap">
+
+
+						<div class="card-body">
+							<h5 class="card-title text-white">{{ gite.nom }}</h5>
+							<p class="card-text text-white">{{ gite.region }}
+								/
+								{{ gite.departement }}
+								/
+								{{ gite.ville }}</p>
+							<a href='gite/{{gite.id}}' class="btn btn-primary">Voir le gîte</a>
+						</div>
+					</div>
+				</div>
+			{% endfor %}
+		</div>
+		<div class="text-center">
+			<button class="btn btn-success mb-5">
+				<a class='text-decoration-none text-white' href="recherche/">Rechercher un gîte
+
+
+					<i class="fa-solid fa-magnifying-glass"></i>
+				</a>
+			</button>
+
+
+		</div>
+	</div>
+	<script src="https://kit.fontawesome.com/0da3f5fcb9.js" crossorigin="anonymous"></script>
+
+{% endblock %}

@@ -1,0 +1,194 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Recherche
+{% endblock %}
+
+{% block body %}
+	<style>
+		.card img {
+			width: auto;
+			height: 250px;
+		}
+		.card-txt {
+			width: auto;
+		}
+	</style>
+
+	<div class="row container m-auto">
+		<h1 class='ps-0'>Progica,<span>Réservez la location de vacances de vos rêves :</span>
+		</h1>
+		{{ form_start(form, {'method': 'post', 'attr': {'class': 'form-horizontal p-0', 'data-turbo': 'false'}}) }}
+
+		<div class="row mb-3 d-flex">
+			<div class='d-flex'>
+				<div class="col-2 mt-3 ms-3 bg-dark rounded pb-1" style="--bs-bg-opacity: .7;">
+
+					{{ form_label(form.nom) }}
+					{{ form_widget(form.nom) }}
+					{{ form_errors(form.nom) }}
+				</div>
+			</div>
+		</div>
+
+		<div class="row mb-3 d-flex">
+			<div class="d-flex">
+				<div class="col-2 ms-3 bg-dark rounded pb-1" style="--bs-bg-opacity: .7;">
+
+					{{ form_label(form.region) }}
+					{{ form_widget(form.region) }}
+					{{ form_errors(form.region) }}
+				</div>
+				<div class="col-3 ms-3 bg-dark rounded pb-1" style="--bs-bg-opacity: .7;">
+
+					{{ form_label(form.departement) }}
+					{{ form_widget(form.departement) }}
+					{{ form_errors(form.departement) }}
+				</div>
+				<div class="col-3 ms-3 bg-dark rounded pb-1" style="--bs-bg-opacity: .7;">
+
+					{{ form_label(form.ville) }}
+					{{ form_widget(form.ville) }}
+					{{ form_errors(form.ville) }}
+				</div>
+				<div class="col-3 ms-3 bg-dark rounded pb-1" style="--bs-bg-opacity: .7;">
+
+
+					{{ form_label(form.distanceMax) }}
+					{{ form_widget(form.distanceMax) }}
+					{{ form_errors(form.distanceMax) }}
+
+
+				</div>
+
+			</div>
+		</div>
+
+		<div class="mb-3 form-check bg-dark rounded pb-1" style="--bs-bg-opacity: .7;">
+			{{ form_label(form.equipements) }}
+			{{ form_widget(form.equipements) }}
+			{{ form_errors(form.equipements) }}
+		</div>
+
+		<div class="col-6 mb-3 form-check bg-dark rounded pb-1" style="--bs-bg-opacity: .7;">
+			{{ form_label(form.services) }}
+			{{ form_widget(form.services) }}
+			{{ form_errors(form.services) }}
+		</div>
+
+		<div class="col-3 ms-4 mb-3 form-dark bg-dark rounded p-1" style="--bs-bg-opacity: .7;">
+			{{ form_widget(form.accepte_animaux) }}
+			{{ form_label(form.accepte_animaux) }}
+			{{ form_errors(form.accepte_animaux) }}
+		</div>
+
+		<div class="text-center my-4">
+			{{ form_widget(form.rechercher) }}
+			{{ form_widget(form.latitude) }}
+			{{ form_widget(form.longitude) }}
+
+			<button class="btn btn-secondary" type="reset">
+				<a class='text-white' href="/recherche">Effacer</a>
+			</button>
+		</div>
+		<div class="" id="resultat"></div>
+
+		{{ form_end(form) }}
+	</div>
+	<div class='row recherche m-auto'>
+		{% if app.request.method == 'POST' %}
+			<div class="mt-4">
+				<h2>Résultat de la recherche:</h2>
+				<p class="mb-2">Gîtes disponibles ({{ gites|length }}):</p>
+
+				{% if gites is empty %}
+					<p>Aucun gîte n'est disponible pour le moment.</p>
+				{% else %}
+					<div class='row'>
+						{% for gite in gites %}
+							<div class="col-md-4">
+								<div class="card mb-4 bg-dark">
+									<img class="card-img-top" src="{{gite.photo}}" alt="card img cap">
+									<div class="card-body">
+										<h5 class="card-title text-white">{{ gite.nom }}</h5>
+										<p class="card-text text-white">
+											{{ gite.region }}/{{ gite.departement }}/{{ gite.ville }}<br>
+
+											Surface habitable:
+											{{ gite.surfacehabitable }}m²<br>
+											Nombre de chambre :
+											{{ gite.nombrechambre }}<br>
+											Nombre de couchage :
+											{{ gite.nombrecouchage }}
+											<ul class="text-white">
+												<p>Coordonnées du propriétaire</p>
+												<li>{{gite.proprietaire.nom}}</li>
+												<li>{{gite.proprietaire.Telepone}}</li>
+												<li>{{gite.proprietaire.email}}</li>
+											</ul>
+										</p>
+										<p>Coordonnées du contact</p>
+										<ul class="text-white">
+											<li>{{ gite.contact.nom }}</li>
+											<li>{{ gite.contact.telephone }}</li>
+											<li>{{ gite.contact.email }}</li>
+											<li>Disponibilité:
+												{{gite.contact.horairesDisponibilite}}</li>
+										</ul>
+										<p class='text-white'>
+											Prix Hebdomadaire:
+											{{ gite.TarifHebdo }}€<br>
+											Accepte les animaux :{{ gite.accepteAnimaux ? ' Oui' : ' Non' }}
+										</p>
+										<p>Équipements:</p>
+										<ul class='text-white'>
+											{% if gite.equipements|length > 0 %}
+												{% for equipement in gite.equipements %}
+													<li>{{ equipement.nom }}</li>
+												{% endfor %}
+											{% else %}
+												<li>Aucun équipement disponible.</li>
+											{% endif %}
+										</ul>
+										<p>Services</p>
+										<ul class='text-white'>
+											{% for service in gite.services %}
+												<li>{{ service.nom }}</li>
+											{% else %}
+												<li>Aucun service disponible.</li>
+											{% endfor %}
+										</ul>
+									</div>
+								</div>
+							</div>
+						{% endfor %}
+					</div>
+				{% endif %}
+			</div>
+		{% endif %}
+
+	</div>
+
+	<script>
+
+		function obtenirPosition() {
+let latitude = 45.777455;
+let longitude = 3.081943;
+
+if (navigator.geolocation) {
+navigator.geolocation.getCurrentPosition(function (position) { // Succès : Utiliser les coordonnées obtenues
+latitude = position.coords.latitude;
+longitude = position.coords.longitude;
+document.getElementById('gite_latitude').value = latitude;
+document.getElementById('gite_longitude').value = longitude
+}, function (error) { // Erreur
+document.getElementById('resultat').innerHTML = 'Erreur de géolocalisation : ' + error.message + '<br>';
+})
+} else { // Géolocalisation non supportée
+document.getElementById('resultat').innerHTML = 'La géolocalisation n\'est pas supportée par ce navigateur.<br>';
+}
+}
+
+document.addEventListener('DOMContentLoaded', obtenirPosition);
+	</script>
+
+{% endblock %}

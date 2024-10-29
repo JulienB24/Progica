@@ -1,0 +1,116 @@
+<?php
+
+namespace App\Entity;
+
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
+use App\Entity\Gite;
+use App\Repository\EquipementRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
+
+#[ORM\Entity(repositoryClass: EquipementRepository::class)]
+#[ApiResource(
+    operations: [
+        new Get(),
+        new Post(),
+        new Put(),
+        new Delete(),
+    ]
+)]
+class Equipement
+{
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
+    private ?int $id = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $nom = null;
+
+    #[ORM\Column(length: 25)]
+    private ?string $categorie = null;
+
+    /**
+     * @var Collection<int, Gite>
+     */
+    #[ORM\ManyToMany(targetEntity: Gite::class, mappedBy: 'equipements')]
+    private Collection $gites;
+
+    public function __construct()
+    {
+        $this->gites = new ArrayCollection();
+    }
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function setId(int $id): static
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
+    public function getNom(): ?string
+    {
+        return $this->nom;
+    }
+
+    public function setNom(string $nom): static
+    {
+        $this->nom = $nom;
+
+        return $this;
+    }
+
+    public function getCategorie(): ?string
+    {
+        return $this->categorie;
+    }
+
+    public function setCategorie(string $categorie): static
+    {
+        $this->categorie = $categorie;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Gite>
+     */
+    public function getGites(): Collection
+    {
+        return $this->gites;
+    }
+
+    public function addGite(Gite $gite): static
+    {
+        if (!$this->gites->contains($gite)) {
+            $this->gites->add($gite);
+            $gite->addEquipement($this);
+        }
+
+        return $this;
+    }
+
+    public function removeGite(Gite $gite): static
+    {
+        if ($this->gites->removeElement($gite)) {
+            $gite->removeEquipement($this);
+        }
+
+        return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->nom; // Assurez-vous que cette propriété est une chaîne de caractères
+    }
+}
